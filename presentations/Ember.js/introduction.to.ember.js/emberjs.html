@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html style="height: 100%;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8">
+<title>Ember.js: A framework for creating ambitious web applications | RubyGDL 2013 Agust 8 presentation by
+  Manuel Vidaurre @mvidaurre (made with impress.js presentation tool by
+  Bartek Szopka @bartaz)</title>
+<meta name="description" content="Ember.js: A framework for creating ambitious web applications ">
+<meta name="author" content="Manuel Vidaurre">
+
+<link rel="stylesheet" href="files/font.css">
+<link rel="stylesheet" href="files/default.css">
+<link rel="stylesheet" href="files/highlight.js/styles/ir_black.css">
+
+<div id="impress" class="impress-not-supported">
+  <div id="fm1" class="fallback-message hidden">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js,
+      so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b> or
+      <b>Safari</b> browser. Firefox 10 (to be released soon)
+      will also handle it.</p>
+  </div>
+  <div id="fm2" class="fallback-message">
+    <p>If you have fast machine and recent Google Chrome or Safari installed,
+      please check <a href="3d/index.html">a bit more "moving" version of that presentation</a></p>
+    <p style="text-align:center"><big>Otherwise, scroll down to see the slides</big></p>
+  </div>
+
+  <div id="emberjs" class="step">
+    <img id="emberjs-logo" src="https://secure.gravatar.com/avatar/792333d2bad390e8a2e23f5e2f41f214?s=420&d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png" />
+    <h3 class="lone">A framework for creating ambitious web applications</h3>
+    <p class="footer">
+      <span><a href="http://about.me/manuel.vidaurre" title="Manuel Vidaurre">Manuel Vidaurre, MC</a></span> ·
+      <span><a href="http://agiltec.github.io/" title="Soluciones Agiltec"> <img id="agiltec-logo" src="https://launchrock-assets.s3.amazonaws.com/logo-files/GpujzvLXPPqzAcz.png" alt="Soluciones Agiltec Logo"> </a></span><br />
+      <span><a href="http://rubygdl.herokuapp.com/">Ruby GDL</a></span> ·
+      <span>August 2013</span> ·
+      <span>Guadalajara, Mexico</span>
+      <a href="http://rubygdl.herokuapp.com/" title="Ruby GDL"> <img id="rubyGDL-logo" src="https://si0.twimg.com/profile_images/3566710790/511f393d4ca974201e43fcc17e9b32f2.png" alt="Ruby GDL Logo"> </a> 
+    </p>
+  </div>
+  <div id="why-emberjs" class="step" data-rotate-y="-90">
+    <h3>Why Emberjs -- Javascript MV* Framework?</h3>
+    <p>Organizing the concerns in an application into <em>models</em>, <em>views</em>, <em>controllers</em> and <em>routers</em>, <em>templates</em>, <em>presenters</em> or <em>ViewModels</em>.</p>
+    <p id="thumbs" class="substep"><a href="#/models-description" title="Models" class="thumblink" ><img src="files/img/model.png" alt="Model" /></a><a href="#/views-description" title="Views" class="thumblink" ><img src="files/img/view.png" alt="View" /></a><a href="#/controllers-description" title="Controllers" class="thumblink" ><img src="files/img/controller.png" alt="Controller" /></a><a href="#/routers-description" title="Routers" class="thumblink" ><img src="files/img/router.png" alt="Router" /></a><a href="#/templates-description" title="Templates" class="thumblink" ><img src="files/img/template.png" alt="Template" /></a><br /></p>
+  </div>
+
+  <div id="logical-abstraction-layers" class="step" data-rotate-x="20">
+    <h3>Ember.js structure the application into logical abstraction layers</h3>
+    <p class="substep"><strong>Model:</strong> is an object that stores <em>persistent state</em></p>
+    <p class="substep"><strong>Template:</strong> describes the user interface of the application. <strong>View:</strong> for sophisticated handling of user events or to create a re-usable component</p>
+    <p class="substep"><strong>Router:</strong> translates a URL into a series of nested templates, each backed by a model. <strong>Controllers:</strong> is an object that stores <em>application state</em></p>
+  </div>
+
+  <div id="built-in-mechanisms" class="step"  data-rotate-y="45">
+    <h3>Ember.js have several built-in mechanisms as:</h3>
+    <p class="substep"><strong>Bindings:</strong> changes to one variable will propagate its value into other variables</p>
+    <p class="substep"><strong>Computed Properties:</strong> That will automatically update along with the properties they are reliant upon</p>
+    <p class="substep"><strong>Automatically Updated Templates:</strong> to keep up-to-date the WUI whenever changes happen to the underlying data</p>
+  </div>
+
+  <div id="naming-conventions" class="step"  data-rotate-y="45">
+    <h3>Ember.js use convention over configuration</h3>
+    <ul>
+      <p>Ember.js has strong assumptions regarding the names of the different objects in the application, based on those conventions Ember.js frecuently generates code on the fly in memory:</p>
+      <pre>
+        <code>
+@resource "posts", ->     # Route definition for the Post resource
+App.PostsRoute            # Route
+App.PostsController       # Controller
+App.Post                  # Model
+App.PostsView             # View
+posts                     # Template
+        </code>
+      </pre>
+    </ul>
+  </div>
+
+    <div id="app-naming-conventions" class="step"  data-rotate-x="45">
+      <h4>When the application boots, Ember will look for these objects:</h4>
+      <small>
+      <div class="substep">
+        <pre><code class="coffeescript">App.ApplicationRoute          # Route Ember will invoke the router's 
+                              # hooks first before rendering the template
+App.ApplicationController     # Controller Ember will set an instance of this
+                              # as the controller for the template
+application                   # Template (main) its properties <- controller
+          </code>
+        </pre>
+      </div>
+      <div class="substep">
+      <pre><code class="coffeescript">App.ApplicationRoute = Ember.Route.extend(setupController: (controller) ->
+  controller.set "title", "Hello world!"
+)
+App.ApplicationController = Ember.Controller.extend(appName: "My First Example")</code>
+      </pre>
+      </div>
+      <div class="substep">
+      <pre><code class="html">&lt;h1&gt;{{appName}}&lt;/h1&gt;<br/>&lt;h2&gt;{{title}}&lt;/h2&gt;</code>
+      </pre>
+      </div>
+      </small>
+    </div>
+
+
+    <div id="resource-naming-conventions" class="step"  data-rotate-y="25">
+      <h4>When the application access a resource as <code>/posts</code>, Ember will look for these objects:</h4>
+      <small>
+      <div class="substep">
+        <pre><code class="coffeescript">App.PostsRoute          # Route Ember will invoke the router's hooks first before rendering 
+                        # the template
+App.PostsController     # Controller Ember will set an instance of this as the controller for
+                        # the posts template
+posts                   # Template that will be render in the {{outlet}} in the application template</code></pre>
+      </div>
+      <div class="substep">
+      <pre><code class="coffeescript">App.PostsRoute = Ember.Route.extend(model: ->
+  # the model is an Array of all of the posts
+  App.Post.find()
+)</code></pre>
+      <p>Because the model is an Array, Ember.js will automatically supply an instance of <code>Ember.ArrayController</code>, which will present the backing Array as its model</p>
+      </div>
+      <div class="substep">
+      <pre><code class="html">&lt;ul&gt;<br/>{{#each controller}}<br/>  &lt;li&gt;{{title}}&lt;/li&gt;<br/>{{/each}}<br/>&lt;/ul&gt;</code>
+      </pre>
+      </div>
+      </small>
+    </div>
+
+    <div id="dynamic-segments-naming-conventions" class="step"  data-rotate-x="35">
+      <h4>If a route uses a dynamic segment, the route's model will be based on the value of that segment provided by the user:</h4>
+      <small>
+      <div class="substep">
+        <pre><code class="coffeescript">App.Router.map ->
+  @resource "post",
+    path: "/posts/:post_id"</code></pre>
+      </div>
+      <div class="substep">
+      <pre><code class="coffeescript">App.PostRoute          # Route handler's model hook converts the dynamic :post_id
+                       # parameter into a model
+App.PostController     # Controller Ember will set an instance of this as the controller for
+                       # the post template
+post                   # Template that will be render in the {{outlet}} in the posts template</code></pre>
+      <p>Because the model is an Object, Ember.js will automatically supply an instance of <code>Ember.ObjectController</code>, which will present the backing Object as its model</p>
+      </div>
+      <div class="substep">
+      <pre><code class="coffeescript">App.PostRoute = Ember.Route.extend(
+  model: (params) ->
+    App.Post.find params.post_id
+  serialize: (post) ->
+    post_id: post.get("id")
+)
+</code>
+      </pre>
+      </div>
+      </small>
+    </div>
+
+  <div id="creating-an-app" class="step"  data-rotate-x="90">
+    <h3>Creating an Application</h3>
+    <pre><code class="coffeescript">window.App = Ember.Application.create()</code></pre>
+    <p>This give you:</p>
+    <ul>
+      <li>The application namespace <code>App</code></li>
+      <li>Adds event listeners to the <code>document</code> and delegates events to the views</li>
+      <li>Automatically renders the <code>application</code> template</li>
+      <li>Automatically creates a router and begins routing, choosing which template and model to display based on the current URL</li>
+    </ul>
+  </div>
+
+  <div id="models-description" class="step"  data-rotate-x="90">
+    <h3><img src="files/img/model.png" alt="Model">Ember.js Models</h3>
+    <ul>
+      <li>The model layer holds the data for the application defining the attributes and relationships for a given type</li>
+      <li>Generally are specified clearly through a semi-strict schema</li>
+      <li>It could be a simple array or data dynamically retrieved from a RESTful JSON API</li>
+      <li>The methods <code>get</code> and <code>set</code> are use for accessing and assigning values of the model attributes</li>
+      <li>In most Ember.js apps, models are handled by <strong>Ember Data</strong></li>
+      <li>Every application using <strong>Ember Data</strong> has a <em>store</em> which is the repository that holds loaded models, and is responsible for retrieving models that have not yet been loaded</li>
+    </ul>
+  </div>
+
+  <div id="models-definition" class="step">
+    <h4>Defining an store (using Ember Data)</h4>
+    <div class="substep">
+      <pre><code class="coffeescript">App.Store = DS.Store.extend
+  revision: 13
+  adapter: DS.RESTAdapter.create
+    namespace: 'api/v1'</code></pre>
+    </div>
+   <h4>Defining a model with attributes</h4>
+   <div class="substep">
+     <pre><code class="coffeescript">App.Person = DS.Model.extend(
+  firstName: DS.attr("string")
+  lastName: DS.attr("string")
+  birthday: DS.attr("date")
+  fullName: ->
+    @get("firstName") + " " + @get("lastName")
+  .property("firstName", "lastName")
+  posts: DS.hasMany('App.Post')
+)
+App.Post = DS.Model.extend(
+  title: DS.attr("string")
+  intro: DS.attr("string")
+  content: DS.attr("string")
+  author: DS.belongsTo("App.Person")
+)</code></pre>
+   </div>
+  </div>
+
+<div id="models-json" class="step">
+    <h5>Expected JSON for a Person ( GET /api/v1/people/2)</h5>
+    <div class="substep">
+      <pre><code class="json">{"person": {
+  "id": "2",
+  "first_name": "Jeff",
+  "last_name": "Atwood",
+  "birthday": "1993-06-05T22:24:03Z",
+  "post_ids": [4, 9, 13]}
+}</code></pre>
+    </div>
+    <h5>Expected JSON for a collection of Persons (GET /api/v1/people)</h5>
+    <div class="substep">
+      <pre><code class="json">{"people": [{"id": "1",
+    "first_name": "Ron",
+    "last_name": "Jeffries",
+    "birthday": "1978-08-15T12:14:53Z",
+    "post_ids": [1, 2, 5, 7]
+  },{"id": "2",
+    "firstName": "Jeff",
+    "lastName": "Atwood",
+    "birthday": "1993-06-05T22:24:03Z",
+    "post_ids": [4, 9, 13]}]
+}</code></pre>
+    </div>
+  </div>
+
+  <div id="finding-models" class="step">
+      <h3>Finding models</h3>
+      <div class="substep">
+        <pre><code class="coffeescript">post = App.Post.find(1)  # Finding an specific model record</code></pre>
+      <small>If a record with that ID has already been created, it will be returned immediately. This feature is sometimes called an <em>identity map</em></small>
+      </div>
+      <div class="substep">
+        <pre><code class="coffeescript">post = App.Post.find()  # Finding all the model records</code></pre>
+      <small><small>This returns an instance of <code>DS.RecordArray</code>. The record array will start in a loading state with a length of 0, but can immediately be use it in templates. When the server responds with results, the templates will watch for changes in the length and update themselves automatically. <br />
+      Note: <code>DS.RecordArray</code> is not a JavaScript array,implements Ember.Enumerable. For retrieve records by index the <code>[]</code> notation will not work, use the <code>objectAt(index)</code> method.</small></small>
+      </div>
+      <pre><code class="coffeescript">people = App.Person.find(firstName: "Peter")  # Finding all the model records  
+                                            # that satisfy the query criteria </code></pre>
+    </div>
+  <div id="controllers-description" class="step" data-rotate-y="90">
+    <h4><img src="files/img/controller.png" alt="Controller">Ember.js Controllers</h4>
+    <ul>
+      <li>Delivers (as proxy) model data to <em>Templates</em> and <em>Views</em></li>
+      <li>Allow to decorate the models with display logic</li>
+      <li>Use <code class="javascript">Ember.ObjectController</code> to represent a <strong>single model</strong></li>
+      <li>Use <code class="javascript">Ember.ArrayController</code> to represent <strong>an array of models</strong></li>
+      <li><em>Templates</em> know about <em>Controllers</em> and <em>Controllers</em> know about <em>Models</em>, but the reverse is not true.</li>
+      <li>To tell a <code class="javascript">Controller</code> which model to represent that not conform with the name convention, set its <code class="javascript">model</code> property in the route's <code class="javascript">setupController</code> method.</li>
+    </ul>
+  </div>
+
+<div id="controllers-definition-single-model" class="step">
+    <h4>Representing a Single Model</h4>
+    <div class="substep">
+      <pre><code class="coffeescript">App.PostController = Ember.ObjectController.extend(isExpanded: false)</code></pre>
+    </div>
+    <div class="substep">
+      <pre><code class="coffeescript">App.PostRoute = Ember.Route.extend(setupController: (controller, post) ->
+  controller.set "model", post
+)</code></pre>
+    </div>
+      <div class="substep">
+        <pre><code class="handlebars">&lt;h1&gt;{{title}}&lt;/h1&gt;<br/>&lt;h2&gt;by {{author}}&lt;/h2&gt;<br/><br/>&lt;div class='intro'&gt;<br/>  {{intro}}<br/>&lt;/div&gt;<br/>&lt;hr&gt;<br/><br/>{{#if isExpanded}}<br/>  &lt;button {{action toggleProperty 'isExpanded'}}&gt;Hide Content&lt;/button&gt;<br/>  &lt;div class='content'&gt;<br/>    {{content}}<br/>  &lt;/div&gt;<br/>{{else}}<br/>  &lt;button {{action toggleProperty 'isExpanded'}}&gt;Show Content&lt;/button&gt;<br/>{{/if}}</code></pre>
+      </div>
+
+  </div>
+
+  <div id="controllers-definition-multiple-models" class="step">
+      <h4>Representing Multiple Models</h4>
+      <div class="substep">
+        <pre><code class="coffeescript">App.PostsController = Ember.ArrayController.extend(tooManyWordsPost: ->
+  tooManyWordsPost = @filter((post) ->
+    post.get("words") > 3000
+  )
+  tooManyWordsPost.get "words"
+.property("@each.words"))</code></pre>
+      </div>
+      <div class="substep">
+        <pre><code class="coffeescript">App.PostsRoute = Ember.Route.extend(setupController: (controller, person) ->
+  controller.set "model", person.get("posts")
+)</code></pre>
+      </div>
+        <div class="substep">
+          <pre><code class="handlebars">&lt;h1&gt;Author: {{fullName}}&lt;/h1&gt;<br/><br/>&lt;ul&gt;<br/>  {{#each controller}}<br/>    &lt;li&gt;{{title}}&lt;/li&gt;<br/>  {{/each}}<br/>&lt;/ul&gt;<br/><br/>{{tooManyWordsPost}} posts over 3000 words.</code></pre>
+        </div>
+
+    </div>
+
+  <div id="routers-description" class="step" data-rotate-x="-90">
+    <h4><img src="files/img/router.png" alt="Router">Ember.js Routers</h4>
+    <ul>
+      <li>Runs code when URLs are visited, also can load data and assigns it to a controller and rendering the appropriate template to the screen</li>
+      <li>Each route can have subroutes and the <em>Router</em> can navigate between states within the application</li>
+      <li>The application has one or more active route handlers that are activated when: the user interacts generating an event that caused the URL to change or the user changed the URL manually or the page was loaded for the first time</li>      
+      <li><q>If your User Interface is nested, your routes should be nested - Yehuda Katz</q></li>
+    </ul>
+  </div>
+
+  <div id="routes-definition" class="step">
+      <h4>Defining a Resource</h4>
+      <div class="substep">
+        <pre><code class="coffeescript">App.Router.map ->
+  @resource "posts", ->
+    @route "new"</code></pre>
+      </div>
+      <div class="substep">
+        <p>This router creates three routes:</p>
+<pre><code class="http">
+<table id="resource-routes">
+  <thead>
+  <tr>
+    <th>URL</th>
+    <th>Route Name</th>
+    <th>Controller</th>
+    <th>Route</th>
+    <th>Template</th>
+  </tr>
+  </thead>
+  <tr>
+    <td>/</td>
+    <td>index</td>
+    <td>IndexController</td>
+    <td>IndexRoute</td>
+    <td>index</td>
+  </tr>
+  <tr>
+    <td>N/A</td>
+    <td>posts</td>
+    <td>PostsController</td>
+    <td>PostsRoute</td>
+    <td>posts</td>
+  </tr>
+  <tr>
+    <td>/posts</td>
+    <td>posts.index</td>
+    <td>PostsController<br>↳PostsIndexController</td>
+    <td>PostsRoute<br>↳PostsIndexRoute</td>
+    <td>posts<br>↳posts/index</td>
+  </tr>
+  <tr>
+    <td>/posts/new</td>
+    <td>posts.new</td>
+    <td>PostsController<br>↳PostsNewController</td>
+    <td>PostsRoute<br>↳PostsNewRoute</td>
+    <td>posts<br>↳posts/new</td>
+  </tr>
+</table>
+</code></pre>
+<p>A way to see the routes defined in an Emberjs App is in the javascript console use: <code>App.Router.router.recognizer.names</code> </p>
+<p>NOTE: You should use <code>this.resource</code> for URLs that represent a <strong>noun</strong>,
+and <code>this.route</code> for URLs that represent <strong>adjectives</strong> or <strong>verbs</strong>
+modifying those nouns.</p>
+        </div>
+
+    </div>
+
+
+<div id="nested-resources-definition" class="step">
+      <h4>Defining Nested Resource</h4>
+      <div class="substep">
+        <pre><code class="coffeescript">App.Router.map ->
+  @resource "person",
+    path: "/people/:person_id"
+  , ->
+    @route "edit"
+    @resource "posts", ->
+      @route "new"</code></pre>
+      </div>
+      <div class="substep">
+        <p>This nested router creates the following routes:</p>
+<pre style="overflow: auto"><code class="http">
+  <table id="resource-routes">
+    <thead>
+    <tr>
+      <th>URL</th>
+      <th>Route Name</th>
+      <th>Controller</th>
+      <th>Route</th>
+      <th>Template</th>
+    </tr>
+    </thead>
+    <tr>
+      <td>/</td>
+      <td>index</td>
+      <td>App.IndexController</td>
+      <td>App.IndexRoute</td>
+      <td>index</td>
+    </tr>
+    <tr>
+      <td>N/A</td>
+      <td>person</td>
+      <td>App.PersonController</td>
+      <td>App.PersonRoute</td>
+      <td>person</td>
+    </tr>
+    <tr>
+      <td>/people/:person_id</td>
+      <td>person.index</td>
+      <td>App.PersonIndexController</td>
+      <td>App.PersonIndexRoute</td>
+      <td>person/index</td>
+    </tr>
+    <tr>
+      <td>/people/:person_id/edit</td>
+      <td>person.edit</td>
+      <td>App.PersonEditController</td>
+      <td>App.PersonEditRoute</td>
+      <td>person/edit</td>
+    </tr>
+    <tr>
+      <td>N/A</td>
+      <td>posts</td>
+      <td>App.PostsController</td>
+      <td>App.PostsRoute</td>
+      <td>posts</td>
+    </tr>
+    <tr>
+      <td>/people/:person_id/posts</td>
+      <td>posts.index</td>
+      <td>App.PostsIndexController</td>
+      <td>App.PostsIndexRoute</td>
+      <td>posts/index</td>
+    </tr>
+    <tr>
+      <td>/people/:person_id/posts/new</td>
+      <td>posts.new</td>
+      <td>App.PostsNewController</td>
+      <td>App.PostsNewRoute</td>
+      <td>posts/new</td>
+    </tr>
+  </table>
+</code></pre>
+
+    </div>
+  </div>
+  <div id="templates-description" class="step" data-rotate-x="45">
+    <h4><img src="files/img/template.png" alt="Template">Ember.js Templates</h4>
+    <ul>
+      <li>Use <em>Handlebars</em> templating language. In addition to plain HTML, can contain: <em>Expressions</em>, <em>Outlets</em>, and <em>Components</em></li>
+      <li><em>Expressions:</em> Each template has an associated controller. These expressions are bindings aware. <em>Conditionals</em> and <em>Iterators</em> are block expressions</li>      
+      <li><em>Outlets:</em> are similar to Ruby <code>yield</code> but <code>{{outlet}}</code> is a placeholder that the router will fill in with the appropriate template, based on the current URL</li>
+      <li><em>Components:</em> are UI custom elements that are isolated and can be reused</li>
+    </ul>
+  </div>
+
+  <div id="templates-types" class="step">
+    <h4>The Templates and <em>Handlebars</em> <img id="handlebars-logo" src="http://blog.comperiosearch.com/wp-content/uploads/2012/09/handlebars_logo.png"></h4>
+    <ul>
+      <li>The <strong>Application Template</strong> is the default template that is rendered when your application starts</em></li>
+      <li>In HTML you can define a template using <pre><code class="html">&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;your-template-name&quot;&gt;</code></pre></li>      
+      <li><em>Handlebars</em> has several helpers including: <pre><code>{{#if <em>expression</em>}}...{{else}}...{{/if}}
+{{#unless <em>expression</em>}}...{{/unless}}
+{{#each <em>member</em> in <em>enumerable</em>}}...{{else}}...{{/each}}
+{{#with <em>scope</em>}}...{{/with}}
+&lt;html_element {{bindAttr attribute=&quot;expression&quot;}} other_attr&gt;
+&lt;div {{bindAttr class=&quot;:new isEnabled:enabled:disabled&quot;}}&gt;
+{#linkTo 'person.edit' person}}{{person.fullName}}{{/linkTo}}
+&lt;button {{action 'expand'}}&gt;Show More...&lt;/button&gt;
+</code></pre></li>
+    </ul>
+  </div>
+
+  <div id="templates-partials" class="step" data-rotate-y="25">
+    <h4><em>Handlebars</em>: Partials <img id="handlebars-logo" src="http://blog.comperiosearch.com/wp-content/uploads/2012/09/handlebars_logo.png"></h4>
+    <ul>
+      <li>
+        <code>{{partial}}</code> takes the template to be rendered as an argument, and renders that template in place. It does not change context or scope. The partial's data-template-name must start with an underscore
+        <pre>
+          <code>&lt;script type=&quot;text/x-handlebars&quot; data-template-name='_author'&gt;<br/>  Written by {{author.firstName}} {{author.lastName}}<br/>&lt;/script&gt;<br/>&lt;script type=&quot;text/x-handlebars&quot; data-template-name='post'&gt;<br/>  &lt;h1&gt;{{title}}&lt;/h1&gt;<br/>  &lt;div&gt;{{content}}&lt;/div&gt;<br/>  {{partial &quot;author&quot;}}<br/>&lt;/script&gt;</code>
+        </pre>
+        <cite>It is the simplest way to render a template. Turns template text into HTML using the current context (controller, data, router)</cite>
+      </li>     
+    </ul>
+  </div>
+
+    <div id="templates-views" class="step" data-rotate-y="-25">
+      <h4><em>Handlebars</em>: Views <img id="handlebars-logo" src="http://blog.comperiosearch.com/wp-content/uploads/2012/09/handlebars_logo.png"></h4>
+      <ul>
+        <li><code>{{view}}</code> works like the partial helper, except instead of providing a template to be rendered within the current template, you provide a view class.<pre><code>App.AuthorView = Ember.View.extend({<br/>  templateName: &quot;author&quot;,<br/>  fullName: (function() {<br/>    return this.get(&quot;author&quot;).get(&quot;firstName&quot;) + &quot; &quot; + this.get(&quot;author&quot;).get(&quot;lastName&quot;);<br/>  }).property(&quot;firstName&quot;,&quot;lastName&quot;)<br/>})</code></pre>
+        <pre>
+          <code>&lt;script type=&quot;text/x-handlebars&quot; data-template-name='author'&gt;<br/>  Written by {{view.fullName}}<br/>&lt;/script&gt;<br/>&lt;script type=&quot;text/x-handlebars&quot; data-template-name='post'&gt;<br/>  &lt;h1&gt;{{title}}&lt;/h1&gt;<br/>  &lt;div&gt;{{content}}&lt;/div&gt;<br/>  {{view App.AuthorView authorBinding=author}}<br/>&lt;/script&gt;
+          </code>
+        </pre>
+        </li>      
+      </ul>
+    </div>
+
+    <div id="templates-renders" class="step">
+      <h4><em>Handlebars</em>: Renders <img id="handlebars-logo" src="http://blog.comperiosearch.com/wp-content/uploads/2012/09/handlebars_logo.png"></h4>
+      <ul>
+        <li><code>{{render}}</code> does not require the presence of a matching route. It takes two parameters: the context to be setup and optional second parameter is a model
+        <pre><code>App.AuthorController = Ember.ObjectController.extend({
+  postCount: function() { 
+    return App.Post.countForAuthor(this.get("model"));
+  }.property("model","App.Post.@each.author")
+})</code></pre>
+        <pre>
+          <code>&lt;script type=&quot;text/x-handlebars&quot; data-template-name='author'&gt;<br/>  Written by {{firstName}} {{lastName}}. <br/>  Total Posts: {{postCount}}<br/>&lt;/script&gt;<br/>&lt;script type=&quot;text/x-handlebars&quot; data-template-name='post'&gt;<br/>  &lt;h1&gt;{{title}}&lt;/h1&gt;<br/>  &lt;div&gt;{{content}}&lt;/div&gt;<br/>  {{render &quot;author&quot; author}}<br/>&lt;/script&gt;
+          </code>
+        </pre>
+        </li>      
+      </ul>
+    </div>
+
+    <div id="templates-controls" class="step">
+      <h4><em>Handlebars</em>: Controls <img id="handlebars-logo" src="http://blog.comperiosearch.com/wp-content/uploads/2012/09/handlebars_logo.png"></h4>
+      <ul>
+        <li><code>{{control}}</code> works like render, except it uses a new controller instance for every call, instead of reusing the singleton controller
+        </li>
+        <li><code>{{render}}</code> cannot be called multiple times for the same route when not specifying a model. For that you'll need <code>{{control}}</code></li>
+        <li>This helper is currently under heavy development, and will likely change soon. The <code>{{control}}</code> helper is currently disabled by default. To enable it set <code>ENV.EXPERIMENTAL_CONTROL_HELPER = true</code> before requiring Ember.</li> 
+      </ul>
+    </div>
+  <div id="enumerables" class="step">
+    <h4>Enumerables</h4>
+    <ul>
+      <li>Enumerable is any object that contains a number of child objects, and which allows you to work with those children using the <code>Ember.Enumerable</code> API that follows ECMAScript specifications as much as possible</li>
+      <small><pre>
+        <code class="coffeescript">
+enumerables.forEach callback, target # To iterate in each element of the Enumerable
+enumerables.toArray()                # Converts the enumerable into a genuine Array
+enumerables.map callback, target     # Maps all the items to another value, returning
+                                     # a new array
+enumerables.filter callback, target  # Returns an array with all of the items in the 
+                                     # enumeration that the passed function returns true for
+enumerables.every callback, target   # Returns true if the passed function returns true
+                                     # for every item in the enumeration
+enumerables.some callback, target    # Returns true if the passed function returns true
+                                     # for any item in the enumeration
+callback = (item, index, enumerable) -> # item is the current item in the iteration.
+                                        # index is the current index in the iteration.
+                                        # enumerable is the enumerable object itself.
+
+        </code>
+      </pre></small>
+    </ul>
+  </div>
+
+
+  <div id="ember-data-fixture-adapter" class="step">
+    <h3>Ember-Data: The FixtureAdapter</h3>
+    <p>Allows to begin developing Ember.js apps now, and switch to another adapter when the API is ready to be consumed without any changes to the application code</p>
+    <div class="substep">
+      <pre><code>App = Ember.Application.create()
+App.Store = DS.Store.extend(
+  revision: 13
+  adapter: DS.FixtureAdapter.create()
+)
+App.Person = DS.Model.extend(
+  firstName: DS.attr("string")
+  lastName: DS.attr("string")
+)
+App.Documenter.FIXTURES = [
+  { id: 1, firstName: 'Yehuda', lastName: 'Katz' },
+  { id: 2, firstName: 'Tom' , lastName: 'Dale'   }
+]</code></pre>
+    </div>
+  </div>
+
+  <div id="integration-testing" class="step">
+    <h4><img src="http://daffl.github.io/jqueryto/images/qunit_logo.png" alt="QUnit Logo"> Integration and Unit Testing</h4>
+    <div class="substep"><small>
+      <pre><code class="coffeescript">App.rootElement = "#arbitrary-element-to-contain-ember-application" 
+App.setupForTesting()
+App.injectTestHelpers() 
+  setup: ->
+    App.reset()
+
+
+#HELPERS
+visit url 
+find selector, context
+click selector
+keyDown selector, type, keyCode
+wait()
+
+#EXAMPLE
+test "creating a post displays the new post", ->
+  visit("/posts/new")
+  .fillIn(".post-title", "A new post")
+  .fillIn(".post-author", "John Doe")
+  .click("button.create").then ->
+    ok find("h1:contains('A new post')").length, "The post's title should display"
+    ok find("a[rel=author]:contains('John Doe')").length, "A link to the author should display"
+
+</code></pre></small>
+    </div>
+  </div>
+
+  <div id="questions" class="step">
+    <h2>Questions ?</h2>
+  </div>
+
+  <div id="thank-you" class="step final">
+    <h2>Thank you !</h2>
+
+    <p class="name">Manuel Vidaurre</p>
+    <p class="email"><a href="mailto:manuel.vidaurre@agiltec.com.mx">manuel.vidaurre@agiltec.com.mx</a></p>
+    <p class="twitter p-a"><a href="https://twitter.com/mvidaurre"><img src="https://si0.twimg.com/profile_images/3688346123/7ca8fedf8737e952d5b86a12070933d2_bigger.png" /> @mvidaurre</a></p>
+    <p class="github p-a"><a href="https://github.com/mvidaurre"><img src="https://secure.gravatar.com/avatar/ac4ca129cf141d672c8e5c3b2bb84d46?s=420&d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" /> github.com/mvidaurre</a></p>
+  </div>
+
+  <div id="overview" class="step" data-x="3400" data-y="2000" data-scale="10"></div>
+  <div class="hint"><p>Use a spacebar or arrow keys to navigate</p></div>
+</div>
+
+<div id="timer"></div>
+
+<script src="files/highlight.js/highlight.pack.js"></script>
+<script src="files/impress.js"></script>
+<script src="files/default.js"></script>
+
+
+</body></html>
