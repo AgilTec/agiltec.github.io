@@ -130,7 +130,7 @@ posts                   # Template that will be render in the {{outlet}} in the 
       <small>
       <div class="substep">
         <pre><code class="coffeescript">App.Router.map ->
-  @resource "post",
+  @resource "posts",
     path: "/posts/:post_id"</code></pre>
       </div>
       <div class="substep">
@@ -369,7 +369,7 @@ modifying those nouns.</p>
       <h4>Defining Nested Resource</h4>
       <div class="substep">
         <pre><code class="coffeescript">App.Router.map ->
-  @resource "person",
+  @resource "people",
     path: "/people/:person_id"
   , ->
     @route "edit"
